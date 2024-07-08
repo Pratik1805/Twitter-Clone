@@ -4,6 +4,8 @@ import Input from '../Input';
 import Modal from "../Modal";
 import RegisterModal from "./RegisterModal";
 import useRegisterModal from "@/hooks/useRegisterModal";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
 const LoginModal = () => {
     const loginModal = useLoginModal();
     const registerModal = useRegisterModal();
@@ -24,27 +26,35 @@ const LoginModal = () => {
         try {
             setIsLoading(true);
 
-            // TODO ADD LOG IN
+            await signIn('credentials', {
+                email,
+                password
+            })
 
             loginModal.onClose();
+            toast.success("Welcome back!!😎");
+
         } catch (error) {
             console.log(error);
+            toast.error("Something Went worng" + error);
         } finally{
             setIsLoading(false);
         }
-    },[loginModal])
+    },[loginModal,email,password])
 
 
     const bodyContent = (
         <div className=" flex flex-col gap-4">
             <Input 
                 placeholder="Email"
+                type="email"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 disabled={isLoading}
             />
             <Input 
                 placeholder="Password"
+                type="password"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 disabled={isLoading}
