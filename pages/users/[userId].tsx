@@ -1,7 +1,6 @@
 import Header from "@/Components/Header";
 import UserBio from "@/Components/users/UserBio";
 import UserHero from "@/Components/users/UserHero";
-import use_Users from "@/hooks/useUser";
 import useUser from "@/hooks/useUser";
 import { useRouter } from "next/router";
 import { ClipLoader } from "react-spinners";

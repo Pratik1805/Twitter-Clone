@@ -9,22 +9,22 @@ export default async function handler(
   }
 
   try {
-    const { userID } = req.query;
+    const { userId } = req.query;
 
-    if (!userID || typeof userID != "string") {
+    if (!userId || typeof userId != "string") {
       throw new Error("Invalid ID");
     }
 
     const existingUser = await prisma.user.findUnique({
       where: {
-        id: userID,
+        id: userId,
       },
     });
 
     const followersCount = await prisma.user.count({
       where: {
         followingIds: {
-          has: userID,
+          has: userId,
         },
       },
     });
