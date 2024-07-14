@@ -1,39 +1,25 @@
-import serverAuth from "@/libs/serverAuth";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next"
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method != 'PATCH') {
-    return res.status(405).end();
-  }
+import serverAuth from "@/libs/serverAuth"
+import prisma from "@/libs/prismadb"
 
-  try {
-    const { currentUser } = await serverAuth(req);
+export default async function handler(request: NextApiRequest, response: NextApiResponse) {
+   if (request.method !== "PATCH") return response.status(405).end()
 
-    const { name, username, bio, profileImage, coverImage } = req.body;
+   try {
+      const currentUser = await serverAuth(request, response)
+      const { name, username, bio, profileImage, coverImage } = request.body
 
-    if (!name || !username) {
-      throw new Error("Missing fields");
-    }
+      if (!name || !username) throw new Error("Missing fields")
 
-    const updatedUser = await prisma.user.update({
-      where: {
-        id: currentUser.id,
-      },
-      data: {
-        name,
-        username,
-        bio,
-        profileImage,
-        coverImage,
-      },
-    });
+      const updatedUser = await prisma.user.update({
+         where: { id: currentUser.id },
+         data: { name, username, bio, profileImage, coverImage },
+      })
 
-    return res.status(200).json(updatedUser);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).end();
-  }
+      return response.status(200).json(updatedUser)
+   } catch (error) {
+      console.log(error)
+      return response.status(400).end()
+   }
 }
