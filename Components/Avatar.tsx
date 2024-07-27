@@ -44,7 +44,7 @@ const Avatar: React.FC<AvatarProps> = ({
         alt="Avatar"
         layout="fill"
         objectFit="cover"
-        className="rounded-full bg-gray-200"
+        className="rounded-full bg-white"
       />
     </div>
   );
