@@ -33,6 +33,37 @@ export default async function handler(
 
     if (req.method === "POST") {
       updatedLikedIds.push(currentUser.id);
+
+      //notification start
+
+      try {
+        const post = await prisma.post.findUnique({
+          where: {
+            id: postId,
+          },
+        });
+
+        if (post?.userId) {
+          await prisma.notification.create({
+            data: {
+              body: "Someone liked your tweet!",
+              userId: post.userId,
+            },
+          });
+
+          await prisma.user.update({
+            where: {
+              id: post.userId,
+            },
+            data: {
+              hasNotifications: true,
+            },
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      //notification end
     }
 
     if (req.method === "DELETE") {
@@ -42,13 +73,13 @@ export default async function handler(
     }
 
     const updatedPost = await prisma.post.update({
-        where:{
-            id:postId
-        },
-        data:{
-            likedIds: updatedLikedIds
-        }
-    })
+      where: {
+        id: postId,
+      },
+      data: {
+        likedIds: updatedLikedIds,
+      },
+    });
 
     return res.status(200).json(updatedPost);
   } catch (error) {
