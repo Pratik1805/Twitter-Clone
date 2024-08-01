@@ -1,33 +1,39 @@
-import Form from "@/Components/Form";
-import Header from "@/Components/Header";
-import CommentFeed from "@/Components/posts/CommentFeed";
-import PostItem from "@/Components/posts/PostItem";
-import usePost from "@/hooks/usePost";
-import { useRouter } from "next/router";
-import { ClipLoader } from "react-spinners";
+import { useRouter } from "next/router"
+import { ClipLoader } from "react-spinners"
+import Head from "next/head"
 
+import usePost from "@/hooks/usePost"
 
-const postView = () => {
-    const router = useRouter();
-    const { postId } = router.query;
+import Header from "@/Components/Header"
+import Form from "@/Components/Form"
+import PostItem from "@/Components/posts/PostItem"
+import CommentFeed from "@/Components/posts/CommentFeed"
 
-    const { data:fetchedPost, isLoading } = usePost(postId as string);
+export default function PostView() {
+   const router = useRouter()
+   const { postId } = router.query
 
-    if(isLoading || !fetchedPost){
-        return (
-            <div className=" flex justify-center items-center h-full">
-                <ClipLoader color="lightblue" size={80}/>
-            </div>
-        )
-    }
-  return (
-    <>
-        <Header label="Tweet" ShowBackArrow/>
-        <PostItem data={fetchedPost}/>
-        <Form postId={postId as string} isComment placeholder="Tweet your reply"/>
-        <CommentFeed comments = {fetchedPost?.comments}/>
-    </>
-  )
+   const { data: fetchedPost, isLoading } = usePost(postId as string)
+
+   if (isLoading || !fetchedPost) {
+      return (
+         <div className="flex items-center justify-center h-full">
+            <ClipLoader color="lightblue" size={80} />
+         </div>
+      )
+   }
+
+   return (
+      <>
+         <Head>
+            <title>Twitter | Post</title>
+            <meta name="description" content="Twitter for sharing events each other" />
+         </Head>
+
+         <Header ShowBackArrow label="Tweet" />
+         <PostItem data={fetchedPost} />
+         <Form postId={postId as string} isComment placeholder="Tweet your reply" />
+         <CommentFeed comments={fetchedPost?.comments} />
+      </>
+   )
 }
-
-export default postView;
